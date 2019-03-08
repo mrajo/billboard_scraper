@@ -22,4 +22,10 @@ class BillboardDb
     def addSong(year, rank, song, artist)
         @db.execute "insert into Charts values (?, ?, ?, ?)", [ year, rank, song, artist]
     end
+
+    def truncateTable
+        @db.execute <<~SQL
+            delete from Charts
+        SQL
+    end
 end
