@@ -1,4 +1,5 @@
 require 'sqlite3'
+require 'terminal-table'
 
 DATABASE = "billboard.db"
 
@@ -27,5 +28,16 @@ class BillboardDb
         @db.execute <<~SQL
             delete from Charts
         SQL
+    end
+
+    def query(where)
+        results = @db.execute <<~SQL
+            select * from Charts
+            where #{where}
+            order by year, rank
+        SQL
+        table = Terminal::Table.new :headings => ['year', 'rank', 'song', 'artist'], :rows => results
+        puts ""
+        puts table
     end
 end
