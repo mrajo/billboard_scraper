@@ -21,22 +21,11 @@ toc.search('//div[@aria-labelledby="Billboard_Year-End_Hot_100_singles"]//td//ul
     doc = Nokogiri::HTML(open("#{ROOT_URL}#{path}"))
   end
 
-  # table formats change in 1982
-  if (year.to_i < 1982)
-    doc.search('//table[contains(@class, "wikitable")]//tr[not(th)]').each do |row|
-      rank = row.search('.//td[1] | .//th[1]').text.strip
-      song = row.search('.//td[2]//a').text.strip
-      artist = row.search('.//td[3]//a').text.strip
-      db.addSong year, rank, song, artist
-      puts "Added song [#{year}] (#{rank}) #{artist} - #{song}"
-    end
-  else
-    doc.search('//table[contains(@class, "wikitable")]//tr[th[not(@scope="col")]]').each do |row|
-      rank = row.search('th').text.strip
-      song = row.search('td:first a').text.strip
-      artist = row.search('td:last a').text.strip
-      db.addSong year, rank, song, artist
-      puts "Added song [#{year}] (#{rank}) #{artist} - #{song}"
-    end
+  doc.search('//table[contains(@class, "wikitable")]//tr[td]').each do |row|
+    rank = row.search('./*[1]').text.strip
+    song = row.search('./*[2]').text.strip.tr('"', '')
+    artist = row.search('./*[3]').text.strip
+    db.addSong year, rank, song, artist
+    puts "Added song [#{year}] (#{rank}) #{artist} - #{song}"
   end
 end
